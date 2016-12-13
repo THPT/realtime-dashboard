@@ -152,10 +152,7 @@
     console.log(event);
     var data = JSON.parse(event.data);
     console.log(data)
-    document.getElementById("current-visitor").innerHTML = data.CreatedAt
-    document.getElementById("current-visitor-total").innerHTML = data.Total
-    document.getElementById("current-visitor-desktop").innerHTML = data.Desktop
-    document.getElementById("current-visitor-mobile").innerHTML = data.Mobile
+    document.getElementById("current-visitor").innerHTML = data.Current
 
 //    console.log(evt.data);
     // document.write("<p>" + evt.data + "</p>");

@@ -1,11 +1,8 @@
 package socket
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"realtime-dashboard/models"
-	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -30,7 +27,7 @@ type Socket struct{}
 
 func (s *Socket) InitSocket() {
 	go h.run()
-	go s.SendMessage()
+	go Processing{}.RealtimePushing()
 }
 
 type connection struct {
@@ -81,33 +78,4 @@ func (s *Socket) ServeWs(w http.ResponseWriter, r *http.Request) {
 	c := &connection{send: make(chan []byte, 256), ws: ws}
 	h.register <- c
 	go c.writePump()
-}
-
-func (s *Socket) SendData(data interface{}) {
-	payload, _ := json.Marshal(data)
-	h.broadcast <- payload
-}
-
-func (s *Socket) SendMessage() {
-	ticker := time.NewTicker(3 * time.Second)
-	locked := int32(-1)
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				if atomic.LoadInt32(&locked) == 1 || len(h.connections) == 0 {
-					continue
-				}
-				atomic.AddInt32(&locked, 1)
-				data := models.UserView{
-					Total:     10,
-					Mobile:    4,
-					Desktop:   6,
-					CreatedAt: time.Now(),
-				}
-				s.SendData(data)
-				atomic.AddInt32(&locked, -1)
-			}
-		}
-	}()
 }

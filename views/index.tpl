@@ -36,25 +36,7 @@
               <b>Right now</b>
             </h4>
             <br>
-            <h1 id="current-visitor" style="margin-top: -10px">14.7K</h1>
-          </div>
-          <div class="col-md-12">
-            <h5>
-              <b>Total</b>
-            </h5>
-            <h2 id="current-visitor-total" style="margin-top: -10px">14.7K</h2>
-          </div>
-          <div class="col-md-12">
-            <h5>
-              <b>Desktop</b>
-            </h5>
-            <h2 id="current-visitor-desktop" style="margin-top: -10px">03:24</h2>
-          </div>
-          <div class="col-md-12">
-            <h5>
-              <b>Mobile</b>
-            </h5>
-            <h2 id="current-visitor-mobile" style="margin-top: -10px">1.6K</h2>
+            <h1 id="current-visitor" style="margin-top: -10px">0</h1>
           </div>
         </div>
       </div>
