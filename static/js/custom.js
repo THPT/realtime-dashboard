@@ -130,33 +130,24 @@
 
   ws.onopen = function() {
     console.log("Ahrrr, I'm connected")
-    // setInterval(function(){
-    //   send('video');
-    // }, 1000);
-    // setInterval(function(){
-    //   send('trending-view');
-    // }, 5000);
-//    setInterval(function(){
-//      send('trending-watch');
-//    }, 5000);
-//    setInterval(function(){
-//      send('trending-share');
-//    }, 5000);
   }
 
-  // function send(type) {
-  //   ws.send(type);
-  // }
 
   ws.onmessage = function(event) {
     console.log(event);
     var data = JSON.parse(event.data);
     console.log(data)
-    document.getElementById("current-visitor").innerHTML = data.Current
+    document.getElementById("current-visitor").innerHTML = data.UserView.Current
 
-//    console.log(evt.data);
-    // document.write("<p>" + evt.data + "</p>");
+    //Trending video
+    var content = "";
+    for (i = 0; i < data.TrendingVideos.length; i++) {
+          content += "<tr><th>"+(i+1)+"</th><th>"+data.TrendingVideos[i].VideoId+"</th><th>"+data.TrendingVideos[i].Count+"</th></tr>";
+    }
+    document.getElementById('list-video').innerHTML = content;
   }
+
+
 
   document.addEventListener("unload", function() {
     if (ws) {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/astaxie/beego"
 
-	"gopkg.in/redis.v3"
+	"gopkg.in/redis.v5"
 )
 
 var Redis *redis.Client

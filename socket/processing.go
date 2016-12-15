@@ -9,11 +9,20 @@ import (
 	"strconv"
 	"sync/atomic"
 	"time"
+
+	gredis "gopkg.in/redis.v5"
 )
 
 const (
-	userHLL = "userHLL"
+	userHLL           = "userHLL"
+	videoTrendingKey  = "video_trending"
+	videoViewCountKey = "video_view"
 )
+
+type RealTime struct {
+	UserView       models.UserView
+	TrendingVideos []models.VideoCount
+}
 
 type Processing struct{}
 
@@ -37,11 +46,22 @@ func (s Processing) RealtimePushing() {
 				if err != nil {
 					log.Println(err)
 				}
-				data := models.UserView{
-					Current:   count,
-					CreatedAt: time.Now(),
+
+				//Trending video
+				videos, err := getTrendingVideos()
+				if err != nil {
+					log.Println(err)
+				}
+
+				data := RealTime{
+					UserView: models.UserView{
+						Current:   count,
+						CreatedAt: time.Now(),
+					},
+					TrendingVideos: videos,
 				}
 				s.SendData(data)
+
 				atomic.AddInt32(&locked, -1)
 			}
 		}
@@ -49,6 +69,7 @@ func (s Processing) RealtimePushing() {
 }
 
 func countActiveUserAtMinute() (int64, error) {
+	redis.Redis.Del(userHLL)
 	minute := time.Now().Minute()
 
 	userHLL1 := keyRedisKeyHLL(minute - 1)
@@ -76,4 +97,36 @@ func keyRedisKeyHLL(minute int) string {
 	}
 	return userHLL + "_" + strconv.Itoa(minute)
 
+}
+
+func realtimeVideoViewByMinute(lastMin string) {
+	// if res := redis.Redis.HGetAllMap(videoViewCountKey + "_" + lastMin); res != nil {
+
+	// }
+}
+
+func getTrendingVideos() ([]models.VideoCount, error) {
+	// ZREVRANGEBYSCORE video_trending +inf -inf WITHSCORES LIMIT 0 10
+	ret := []models.VideoCount{}
+	opt := gredis.ZRangeBy{
+		Min:    "-inf",
+		Max:    "+inf",
+		Offset: 0,
+		Count:  10,
+	}
+	if res := redis.Redis.ZRevRangeByScoreWithScores(videoTrendingKey, opt); res != nil {
+		list, err := res.Result()
+		if err != nil {
+			return ret, err
+		}
+		for _, z := range list {
+			v := models.VideoCount{
+				VideoId: (z.Member).(string),
+				Count:   z.Score,
+			}
+			ret = append(ret, v)
+		}
+	}
+
+	return ret, nil
 }

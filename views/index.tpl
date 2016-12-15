@@ -74,53 +74,21 @@
         </div>
       </div>
       <div class="row" id="div-trending-2">
-        <h3>Top Videos Watched</h3>
+        <h3>Top Videos Watched in last 6 hours</h3>
           <table class="table table-hover">
             <thead>
               <tr>
                 <th>#</th>
                 <th>Video Id</th>
                 <th>Views</th>
-                <th>Watch Time</th>
-                <th>Video Shares</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
+            <tbody id="list-video">
+              <!-- <tr>
                 <th>1</th>
                 <th>28c904fc4a23523ea91cfc2bad6453a6e8eca5551b936c8929cbabe0480c9b11</th>
                 <th>231</th>
-                <th>00:04:03</th>
-                <th>29</th>
-              </tr>
-              <tr>
-                <th>2</th>
-                <th>aabd0570ae92f778913a8197b7788dc55fb5de283506b405224721760b124fbd</th>
-                <th>166</th>
-                <th>00:03:59</th>
-                <th>20</th>
-              </tr>
-              <tr>
-                <th>3</th>
-                <th>878631b2ca997efa77b92270c5f556670415e50cdfcdf2739a69a17b92384544</th>
-                <th>163</th>
-                <th>00:02:30</th>
-                <th>17</th>
-              </tr>
-              <tr>
-                <th>4</th>
-                <th>7cf4366720a7ca9be90c7bf97eb530d41e73d4ea5d23750fd9ff194f091edac6</th>
-                <th>123</th>
-                <th>00:02:11</th>
-                <th>5</th>
-              </tr>
-              <tr>
-                <th>5</th>
-                <th>5e50cdfcdf2739a69a17b92384544878631b2ca997efa77b92270c5f55667041</th>
-                <th>92</th>
-                <th>00:01:05</th>
-                <th>8</th>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
       </div>
