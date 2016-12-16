@@ -1,6 +1,7 @@
 package main
 
 import (
+	"realtime-dashboard/postgresql"
 	"realtime-dashboard/redis"
 	_ "realtime-dashboard/routers"
 
@@ -10,5 +11,8 @@ import (
 func main() {
 	redis.InitRedis()
 	defer redis.CloseRedis()
+
+	postgresql.Init()
+	defer postgresql.CloseDB()
 	beego.Run()
 }

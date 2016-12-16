@@ -30,49 +30,15 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-md-8" id="div-active-user">
-          <div class="col-md-12">
-            <h4>
-              <b>Right now</b>
-            </h4>
-            <br>
-            <h1 id="current-visitor" style="margin-top: -10px">0</h1>
-          </div>
-        </div>
-      </div>
-      <!-- Example row of columns -->
-      <div class="row">
         <div class="col-md-4" id="div-active-user">
-          <div class="col-md-12"><h5><b>Views</b></h5><h2 style="margin-top: -10px">14.7K</h2></div>
-          <div class="col-md-12"><h5><b>Watch Time</b></h5><h2 style="margin-top: -10px">03:24</h2></div>
-          <div class="col-md-12"><h5><b>Video Shares</b></h5><h2 style="margin-top: -10px">1.6K</h2></div>
-          <div class="col-md-12"><h5><b>Current Active Users</b></h5><h2 style="margin-top: -10px">8</h2></div>
+          <div class="col-md-12"><h5><b>Current Active Users</b></h5><h2 style="margin-top: -10px" id="js-active-user">0</h2></div>
+          <div class="col-md-12"><h5><b>Current Video Views</b></h5><h2 style="margin-top: -10px" id="js-video-view">0</h2></div>
         </div>
         <div class="col-md-8" id="div-video-view">
-          <h3>Video view per minute</h3>
           <canvas id="video-chart"></canvas>
         </div>
       </div>
       <!-- trending videos: top videos watched in the last 6 hours, (total views, overall watch time, total video shares) -->
-      <div class="row">
-        <div class="col-md-12" id="div-trending-1">
-          <h3>Trending</h3>
-          <div class="row">
-            <div class="col-md-4">
-              <h5>Views</h5>
-              <canvas id="trending-view-chart"></canvas>
-            </div>
-            <div class="col-md-4">
-              <h5>Average watch time</h5>
-              <canvas id="trending-watchtime-chart"></canvas>                
-            </div>
-            <div class="col-md-4">
-              <h5>Video shares</h5>
-              <canvas id="trending-share-chart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="row" id="div-trending-2">
         <h3>Top Videos Watched in last 6 hours</h3>
           <table class="table table-hover">

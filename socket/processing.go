@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"realtime-dashboard/models"
+	"realtime-dashboard/postgresql"
 	"realtime-dashboard/redis"
 	"strconv"
 	"sync/atomic"
@@ -22,6 +23,7 @@ const (
 type RealTime struct {
 	UserView       models.UserView
 	TrendingVideos []models.VideoCount
+	VideoViews     []models.VideoView
 }
 
 type Processing struct{}
@@ -42,7 +44,15 @@ func (s Processing) RealtimePushing() {
 					continue
 				}
 				atomic.AddInt32(&locked, 1)
+
+				//Active user
 				count, err := countActiveUserAtMinute()
+				if err != nil {
+					log.Println(err)
+				}
+
+				//VideoView
+				videoViews, err := realtimeVideoViewByMinute(time.Now().Add(-20*time.Minute), time.Now())
 				if err != nil {
 					log.Println(err)
 				}
@@ -55,10 +65,12 @@ func (s Processing) RealtimePushing() {
 
 				data := RealTime{
 					UserView: models.UserView{
-						Current:   count,
-						CreatedAt: time.Now(),
+						Current:     count,
+						CreatedAt:   time.Now(),
+						LastMinutes: []int64{},
 					},
 					TrendingVideos: videos,
+					VideoViews:     videoViews,
 				}
 				s.SendData(data)
 
@@ -99,10 +111,20 @@ func keyRedisKeyHLL(minute int) string {
 
 }
 
-func realtimeVideoViewByMinute(lastMin string) {
-	// if res := redis.Redis.HGetAllMap(videoViewCountKey + "_" + lastMin); res != nil {
-
-	// }
+func realtimeVideoViewByMinute(from, to time.Time) ([]models.VideoView, error) {
+	query := `
+	WITH time_range AS (
+	select generate_series(date_trunc('minute', ?::timestamp), date_trunc('minute', ?::timestamp), '1 minute'::interval) AS minute_d
+	)
+	SELECT date_trunc('minute', minute_d) AS "date", COALESCE(sum(view_count),0) AS view_count
+	FROM time_range
+	LEFT JOIN video_view_counts ON time_range.minute_d = date_trunc('minute', created_at) 
+	GROUP BY date_trunc('minute', minute_d)
+	ORDER BY date_trunc('minute', minute_d)
+	`
+	videoViews := []models.VideoView{}
+	err := postgresql.Postgres.Raw(query, from, to).Scan(&videoViews).Error
+	return videoViews, err
 }
 
 func getTrendingVideos() ([]models.VideoCount, error) {
