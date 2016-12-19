@@ -1,15 +1,14 @@
-package postgresql
+package infra
 
 import (
 	"fmt"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
-
 	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 )
 
-var Postgres *gorm.DB
+var PostgreSql *gorm.DB
 
 func Init() {
 	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
@@ -20,20 +19,20 @@ func Init() {
 		beego.AppConfig.String("postgresql_db"))
 	fmt.Println(connectionString)
 	var err error
-	Postgres, err = gorm.Open("postgres", connectionString)
+	PostgreSql, err = gorm.Open("postgres", connectionString)
 	if err != nil {
 		panic(err)
 	}
-	err = Postgres.DB().Ping()
+	err = PostgreSql.DB().Ping()
 	if err != nil {
 		panic(err)
 	}
 
-	Postgres.LogMode(true)
+	PostgreSql.LogMode(true)
 }
 
 func CloseDB() {
-	err := Postgres.Close()
+	err := PostgreSql.Close()
 	if err != nil {
 		panic(err)
 	}

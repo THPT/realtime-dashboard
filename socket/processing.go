@@ -3,10 +3,10 @@ package socket
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
+	"realtime-dashboard/infra"
 	"realtime-dashboard/models"
-	"realtime-dashboard/postgresql"
-	"realtime-dashboard/redis"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -34,7 +34,7 @@ func (s *Processing) SendData(data interface{}) {
 }
 
 func (s Processing) RealtimePushing() {
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(3 * time.Second)
 	locked := int32(-1)
 	go func() {
 		for {
@@ -50,6 +50,7 @@ func (s Processing) RealtimePushing() {
 				if err != nil {
 					log.Println(err)
 				}
+				fmt.Println("TICK")
 
 				//VideoView
 				videoViews, err := realtimeVideoViewByMinute(time.Now().Add(-20*time.Minute), time.Now())
@@ -81,7 +82,7 @@ func (s Processing) RealtimePushing() {
 }
 
 func countActiveUserAtMinute() (int64, error) {
-	redis.Redis.Del(userHLL)
+	infra.Redis.Del(userHLL)
 	minute := time.Now().Minute()
 
 	userHLL1 := keyRedisKeyHLL(minute - 1)
@@ -90,13 +91,13 @@ func countActiveUserAtMinute() (int64, error) {
 	userHLL4 := keyRedisKeyHLL(minute - 4)
 	userHLL5 := keyRedisKeyHLL(minute - 5)
 	// merge
-	if res := redis.Redis.PFMerge(userHLL, userHLL1, userHLL2, userHLL3, userHLL4, userHLL5); res != nil {
+	if res := infra.Redis.PFMerge(userHLL, userHLL1, userHLL2, userHLL3, userHLL4, userHLL5); res != nil {
 		if err := res.Err(); err != nil {
 			return 0, err
 		}
 	}
 
-	pffCountRes := redis.Redis.PFCount(userHLL)
+	pffCountRes := infra.Redis.PFCount(userHLL)
 	if pffCountRes != nil {
 		return pffCountRes.Result()
 	}
@@ -123,7 +124,7 @@ func realtimeVideoViewByMinute(from, to time.Time) ([]models.VideoView, error) {
 	ORDER BY date_trunc('minute', minute_d)
 	`
 	videoViews := []models.VideoView{}
-	err := postgresql.Postgres.Raw(query, from, to).Scan(&videoViews).Error
+	err := infra.PostgreSql.Raw(query, from, to).Scan(&videoViews).Error
 	return videoViews, err
 }
 
@@ -136,11 +137,14 @@ func getTrendingVideos() ([]models.VideoCount, error) {
 		Offset: 0,
 		Count:  10,
 	}
-	if res := redis.Redis.ZRevRangeByScoreWithScores(videoTrendingKey, opt); res != nil {
+	fmt.Println("getTrendingVideos")
+	if res := infra.Redis.ZRevRangeByScoreWithScores(videoTrendingKey, opt); res != nil {
+		fmt.Println(res)
 		list, err := res.Result()
 		if err != nil {
 			return ret, err
 		}
+		fmt.Println(list)
 		for _, z := range list {
 			v := models.VideoCount{
 				VideoId: (z.Member).(string),
