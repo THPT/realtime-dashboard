@@ -145,12 +145,27 @@ func getTrendingVideos() ([]models.VideoCount, error) {
 			return ret, err
 		}
 		fmt.Println(list)
+		videoIds := []string{}
 		for _, z := range list {
 			v := models.VideoCount{
 				VideoId: (z.Member).(string),
 				Count:   z.Score,
 			}
+			videoIds = append(videoIds, v.VideoId)
 			ret = append(ret, v)
+		}
+		videos := []models.Video{}
+		err = infra.PostgreSql.Model(models.Video{}).Where("video_id in (?)", videoIds).Scan(&videos).Error
+		if err != nil {
+			return ret, err
+		}
+
+		for _, video := range videos {
+			for i, r := range ret {
+				if video.VideoID == r.VideoId {
+					ret[i].VideoName = video.Title
+				}
+			}
 		}
 	}
 

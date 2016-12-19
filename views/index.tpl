@@ -46,6 +46,7 @@
               <tr>
                 <th>#</th>
                 <th>Video Id</th>
+                <th>Title</th>
                 <th>Views</th>
               </tr>
             </thead>

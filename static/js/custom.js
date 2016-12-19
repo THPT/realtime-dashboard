@@ -68,7 +68,9 @@ ws.onmessage = function(event) {
   //Trending video
   var content = "";
   for (i = 0; i < data.TrendingVideos.length; i++) {
-        content += "<tr><th>"+(i+1)+"</th><th>"+data.TrendingVideos[i].VideoId+"</th><th>"+data.TrendingVideos[i].Count+"</th></tr>";
+        content += "<tr><th>"+(i+1)+"</th><th>"+
+        data.TrendingVideos[i].VideoId+"</th><th>"+
+        data.TrendingVideos[i].VideoName+"</th><th>"+data.TrendingVideos[i].Count+"</th></tr>";
   }
   document.getElementById("list-video").innerHTML = content;
 }
