@@ -27,17 +27,40 @@
         </div>
       </div>
     </nav>
-
+    
     <div class="container">
       <div class="row">
         <div class="col-md-4" id="div-active-user">
           <div class="col-md-12"><h5><b>Current Active Users</b></h5><h2 style="margin-top: -10px" id="js-active-user">0</h2></div>
+          <div class="col-md-12">
+            <div class="col-md-6">
+              <h5><b>Male</b></h5>
+              <h2 style="margin-top: -5px" id="js-male-user">0</h2>
+            </div>
+            <div class="col-md-6">
+              <h5><b>Female</b></h5>
+              <h2 style="margin-top: -5px" id="js-female-user">0</h2>
+            </div>
+          </div>
+          <div class="col-md-12" id="div-user-view">
+            <canvas id="user-chart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-8">
+         <div id="map"></div> 
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4" id="div-active-video">
+          <div class="col-md-12"><h5><b>Current Video Views</b></h5><h2 style="margin-top: -10px" id="js-video-view">0</h2></div>
           <div class="col-md-12"><h5><b>Current Video Views</b></h5><h2 style="margin-top: -10px" id="js-video-view">0</h2></div>
         </div>
         <div class="col-md-8" id="div-video-view">
           <canvas id="video-chart"></canvas>
         </div>
       </div>
+
       <!-- trending videos: top videos watched in the last 6 hours, (total views, overall watch time, total video shares) -->
       <div class="row" id="div-trending-2">
         <h3>Top Videos Watched in last 6 hours</h3>
@@ -47,25 +70,33 @@
                 <th>#</th>
                 <th>Video Id</th>
                 <th>Title</th>
+                <th>Category</th>
                 <th>Views</th>
               </tr>
             </thead>
             <tbody id="list-video">
               <!-- <tr>
-                <th>1</th>
-                <th>28c904fc4a23523ea91cfc2bad6453a6e8eca5551b936c8929cbabe0480c9b11</th>
-                <th>231</th>
+                append data here
               </tr> -->
             </tbody>
           </table>
       </div>
     </div> <!-- /container -->
 
+    <script>
+
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo73qg8u2urUCCHf4AeqzOz5k80aiIi6E&libraries=visualization&callback=initMap">
+    </script>
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="text/javascript" src="static/js/chart.bundle.min.js"></script>
+    <script type="text/javascript" src="static/js/cities.js"></script>
     <script type="text/javascript" src="static/js/custom.js"></script>
+    <!-- <script type="text/javascript" src="static/js/heatmap.js"></script> -->
   </body>
 </html>

@@ -28,7 +28,7 @@ func Init() {
 		panic(err)
 	}
 
-	PostgreSql.LogMode(true)
+	// PostgreSql.LogMode(true)
 }
 
 func CloseDB() {

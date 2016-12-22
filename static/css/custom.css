@@ -4,7 +4,18 @@ body {
   padding-bottom: 20px;
 }
 
+#map {
+    height: 600px;
+    width: 100%;
+}
+
 #div-active-user {
+    text-align: center;
+    padding-top: 25px;
+    background-color: #EEE9E9;
+}
+
+#div-active-video {
     text-align: center;
     margin-top: 25px;
     padding-top: 25px;
@@ -12,6 +23,13 @@ body {
 }
 
 #div-video-view {
+    text-align: center;
+    margin-top: 25px;
+    padding-right: 25px;
+    background-color: #EEE9E9;
+}
+
+#div-user-view {
     text-align: center;
     margin-top: 25px;
     padding-right: 25px;
@@ -37,6 +55,7 @@ body {
 /* Make column height equal */
 .row{
     overflow: hidden; 
+    padding: 10px;
 }
 
 [class*="col-"]{

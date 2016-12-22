@@ -5,6 +5,7 @@ import "time"
 type VideoCount struct {
 	VideoId   string
 	VideoName string
+	Category  string
 	Count     float64
 }
 

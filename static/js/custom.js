@@ -15,17 +15,6 @@ var videoChart = new Chart(videoCanvas, {
       pointBorderWidth: 1,
       data: [0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0],
       fill: false
-    }, {
-      label: "Current active user",
-      backgroundColor: "rgba(3, 88, 106, 0.3)",
-      borderColor: "rgba(3, 88, 106, 0.70)",
-      pointBorderColor: "rgba(3, 88, 106, 0.70)",
-      pointBackgroundColor: "rgba(3, 88, 106, 0.70)",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgba(151,187,205,1)",
-      pointBorderWidth: 1,
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      fill: false
     }]
   },
   options: {
@@ -46,6 +35,40 @@ var videoChart = new Chart(videoCanvas, {
   }
 });
 
+var userCanvas = document.getElementById("user-chart");
+var userChart = new Chart(userCanvas, {
+  type: 'doughnut',
+  animation:{
+        animateScale:true
+  },
+  data: {
+    labels: ["Female", "Male"],
+    datasets: [{
+      label: "Gender",
+      data: [300, 50],
+        backgroundColor: [
+            "#FF6384",
+            "#36A2EB"
+        ],
+        hoverBackgroundColor: [
+            "#FF6384",
+            "#36A2EB"
+        ]
+    }]
+  }
+});
+
+var map, heatmap;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: { lat: 16.0527412, lng: 106.2337417}
+    });
+    
+}
+
+
 ws.onopen = function() {
   console.log("Ahrrr, I'm connected")
 }
@@ -58,21 +81,45 @@ ws.onmessage = function(event) {
   document.getElementById("js-active-user").innerHTML = data.UserView.Current;
   document.getElementById("js-video-view").innerHTML = data.VideoViews[19].ViewCount;
   var videoViewCounts = [];
-  console.log(videoChart.data)
   for (var i = 0; i < data.VideoViews.length-1; i++) {
     // videoViewCounts.push(data.VideoViews[i].ViewCount);
     videoChart.data.datasets[0].data[i] = data.VideoViews[i].ViewCount;
   }
   videoChart.update();
 
+
+
   //Trending video
   var content = "";
   for (i = 0; i < data.TrendingVideos.length; i++) {
-        content += "<tr><th>"+(i+1)+"</th><th>"+
-        data.TrendingVideos[i].VideoId+"</th><th>"+
-        data.TrendingVideos[i].VideoName+"</th><th>"+data.TrendingVideos[i].Count+"</th></tr>";
+    content += "<tr><th>"+(i+1)+"</th><th>"+
+    data.TrendingVideos[i].VideoId+"</th><th>"+
+    data.TrendingVideos[i].VideoName+"</th><th>"+
+    data.TrendingVideos[i].Category+"</th><th>"+
+    data.TrendingVideos[i].Count+"</th></tr>";
   }
   document.getElementById("list-video").innerHTML = content;
+
+  reloadHeatmap(data.LocationCount)
+}
+
+function reloadHeatmap(locations) {
+  var data = []
+  for (var i = 0; i < cities.length; i++) {
+    for (var k in locations) {
+      if (k == cities[i].name) {
+        data.push(new google.maps.LatLng(cities[i].latitude, cities[i].longitude))
+      }
+    }
+  }
+  heatmap = new google.maps.visualization.HeatmapLayer({
+      data: data,
+      radius: 25
+  });
+  heatmap.setMap(map);
+
+
+
 }
 
 

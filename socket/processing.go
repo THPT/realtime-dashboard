@@ -18,12 +18,14 @@ const (
 	userHLL           = "userHLL"
 	videoTrendingKey  = "video_trending"
 	videoViewCountKey = "video_view"
+	locationCountKey  = "location"
 )
 
 type RealTime struct {
 	UserView       models.UserView
 	TrendingVideos []models.VideoCount
 	VideoViews     []models.VideoView
+	LocationCount  map[string]int
 }
 
 type Processing struct{}
@@ -58,6 +60,11 @@ func (s Processing) RealtimePushing() {
 					log.Println(err)
 				}
 
+				locationCount, err := getLocationCount()
+				if err != nil {
+					log.Println(err)
+				}
+
 				//Trending video
 				videos, err := getTrendingVideos()
 				if err != nil {
@@ -72,6 +79,7 @@ func (s Processing) RealtimePushing() {
 					},
 					TrendingVideos: videos,
 					VideoViews:     videoViews,
+					LocationCount:  locationCount,
 				}
 				s.SendData(data)
 
@@ -79,6 +87,31 @@ func (s Processing) RealtimePushing() {
 			}
 		}
 	}()
+}
+
+func getLocationCount() (map[string]int, error) {
+	ret := map[string]int{}
+	now := time.Now()
+	min := now.Minute()
+	hour := now.Hour()
+	min = (min / 5) * 5
+	timer := min + hour*60
+
+	key := locationCountKey + "_" + strconv.Itoa(timer)
+	if res := infra.Redis.HGetAll(key); res != nil {
+		mapCounting, err := res.Result()
+		if err != nil {
+			log.Println(err)
+			return ret, err
+		}
+
+		//Update trending video
+		for key, val := range mapCounting {
+			count, _ := strconv.Atoi(val)
+			ret[key] = count
+		}
+	}
+	return ret, nil
 }
 
 func countActiveUserAtMinute() (int64, error) {
@@ -90,6 +123,7 @@ func countActiveUserAtMinute() (int64, error) {
 	userHLL3 := keyRedisKeyHLL(minute - 3)
 	userHLL4 := keyRedisKeyHLL(minute - 4)
 	userHLL5 := keyRedisKeyHLL(minute - 5)
+
 	// merge
 	if res := infra.Redis.PFMerge(userHLL, userHLL1, userHLL2, userHLL3, userHLL4, userHLL5); res != nil {
 		if err := res.Err(); err != nil {
@@ -164,6 +198,7 @@ func getTrendingVideos() ([]models.VideoCount, error) {
 			for i, r := range ret {
 				if video.VideoID == r.VideoId {
 					ret[i].VideoName = video.Title
+					ret[i].Category = video.Category
 				}
 			}
 		}
