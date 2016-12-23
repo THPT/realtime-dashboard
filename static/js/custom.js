@@ -66,7 +66,7 @@ function initMap() {
         center: { lat: 16.0527412, lng: 106.2337417}
     });
     window.heatmap = new google.maps.visualization.HeatmapLayer({
-      radius: 25
+      radius: 20
     });
 }
 

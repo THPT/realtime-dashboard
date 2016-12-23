@@ -94,8 +94,10 @@ func getLocationCount() (map[string]int, error) {
 	now := time.Now()
 	min := now.Minute()
 	hour := now.Hour()
-	min = (min / 5) * 5
-	timer := min + hour*60
+	timer := min + hour*60 - 5
+	if timer < 0 {
+		timer += 24 * 60
+	}
 
 	key := locationCountKey + "_" + strconv.Itoa(timer)
 	if res := infra.Redis.HGetAll(key); res != nil {
