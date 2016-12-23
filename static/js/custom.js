@@ -58,21 +58,22 @@ var userChart = new Chart(userCanvas, {
   }
 });
 
-var map, heatmap;
+var map;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 6,
         center: { lat: 16.0527412, lng: 106.2337417}
     });
-    
+    window.heatmap = new google.maps.visualization.HeatmapLayer({
+      radius: 25
+    });
 }
 
 
 ws.onopen = function() {
   console.log("Ahrrr, I'm connected")
 }
-
 
 ws.onmessage = function(event) {
   console.log(event);
@@ -112,14 +113,14 @@ function reloadHeatmap(locations) {
       }
     }
   }
-  heatmap = new google.maps.visualization.HeatmapLayer({
+
+  window.heatmap.setMap(null);
+
+  window.heatmap = new google.maps.visualization.HeatmapLayer({
       data: data,
       radius: 25
   });
-  heatmap.setMap(map);
-
-
-
+  window.heatmap.setMap(map);
 }
 
 
