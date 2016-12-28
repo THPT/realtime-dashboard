@@ -38,7 +38,7 @@ func (s *Processing) SendData(data interface{}) {
 }
 
 func (s Processing) RealtimePushing() {
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
 	locked := int32(-1)
 	go func() {
 		for {
