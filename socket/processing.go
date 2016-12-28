@@ -16,6 +16,8 @@ import (
 
 const (
 	userHLL           = "userHLL"
+	deviceMobileHLL   = "deviceMobileHLL"
+	deviceDesktopHLL  = "deviceDesktopHLL"
 	videoTrendingKey  = "video_trending"
 	videoViewCountKey = "video_view"
 	locationCountKey  = "location"
@@ -48,10 +50,20 @@ func (s Processing) RealtimePushing() {
 				atomic.AddInt32(&locked, 1)
 
 				//Active user
-				count, err := countActiveUserAtMinute()
+				count, err := countHLLAtMinute(userHLL)
 				if err != nil {
 					log.Println(err)
 				}
+				countDesktopView, err := countHLLAtMinute(deviceDesktopHLL)
+				if err != nil {
+					log.Println(err)
+				}
+
+				countMobileView, err := countHLLAtMinute(deviceMobileHLL)
+				if err != nil {
+					log.Println(err)
+				}
+
 				fmt.Println("TICK")
 
 				//VideoView
@@ -74,6 +86,8 @@ func (s Processing) RealtimePushing() {
 				data := RealTime{
 					UserView: models.UserView{
 						Current:     count,
+						Desktop:     countDesktopView,
+						Mobile:      countMobileView,
 						CreatedAt:   time.Now(),
 						LastMinutes: []int64{},
 					},
@@ -116,35 +130,35 @@ func getLocationCount() (map[string]int, error) {
 	return ret, nil
 }
 
-func countActiveUserAtMinute() (int64, error) {
-	infra.Redis.Del(userHLL)
+func countHLLAtMinute(key string) (int64, error) {
+	infra.Redis.Del(key)
 	minute := time.Now().Minute()
 
-	userHLL1 := keyRedisKeyHLL(minute - 1)
-	userHLL2 := keyRedisKeyHLL(minute - 2)
-	userHLL3 := keyRedisKeyHLL(minute - 3)
-	userHLL4 := keyRedisKeyHLL(minute - 4)
-	userHLL5 := keyRedisKeyHLL(minute - 5)
+	HLL1 := keyRedisKeyHLL(key, minute-1)
+	HLL2 := keyRedisKeyHLL(key, minute-2)
+	HLL3 := keyRedisKeyHLL(key, minute-3)
+	HLL4 := keyRedisKeyHLL(key, minute-4)
+	HLL5 := keyRedisKeyHLL(key, minute-5)
 
 	// merge
-	if res := infra.Redis.PFMerge(userHLL, userHLL1, userHLL2, userHLL3, userHLL4, userHLL5); res != nil {
+	if res := infra.Redis.PFMerge(key, HLL1, HLL2, HLL3, HLL4, HLL5); res != nil {
 		if err := res.Err(); err != nil {
 			return 0, err
 		}
 	}
 
-	pffCountRes := infra.Redis.PFCount(userHLL)
+	pffCountRes := infra.Redis.PFCount(key)
 	if pffCountRes != nil {
 		return pffCountRes.Result()
 	}
-	return 0, errors.New("Can not count: " + userHLL)
+	return 0, errors.New("Can not count: " + key)
 }
 
-func keyRedisKeyHLL(minute int) string {
+func keyRedisKeyHLL(key string, minute int) string {
 	if minute < 0 {
 		minute = minute + 60
 	}
-	return userHLL + "_" + strconv.Itoa(minute)
+	return key + "_" + strconv.Itoa(minute)
 
 }
 

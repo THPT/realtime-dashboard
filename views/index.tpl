@@ -34,16 +34,16 @@
           <div class="col-md-12"><h5><b>Current Active Users</b></h5><h2 style="margin-top: -10px" id="js-active-user">0</h2></div>
           <div class="col-md-12">
             <div class="col-md-6">
-              <h5><b>Male</b></h5>
-              <h2 style="margin-top: -5px" id="js-male-user">0</h2>
+              <h5><b>Mobile</b></h5>
+              <h2 style="margin-top: -5px" id="js-mobile-user">0</h2>
             </div>
             <div class="col-md-6">
-              <h5><b>Female</b></h5>
-              <h2 style="margin-top: -5px" id="js-female-user">0</h2>
+              <h5><b>PC</b></h5>
+              <h2 style="margin-top: -5px" id="js-pc-user">0</h2>
             </div>
           </div>
           <div class="col-md-12" id="div-user-view">
-            <canvas id="user-chart"></canvas>
+            <canvas id="device-chart"></canvas>
           </div>
         </div>
         <div class="col-md-8">
@@ -86,10 +86,6 @@
     <script>
 
     </script>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo73qg8u2urUCCHf4AeqzOz5k80aiIi6E&libraries=visualization&callback=initMap">
-    </script>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -97,6 +93,9 @@
     <script type="text/javascript" src="static/js/chart.bundle.min.js"></script>
     <script type="text/javascript" src="static/js/cities.js"></script>
     <script type="text/javascript" src="static/js/custom.js"></script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCo73qg8u2urUCCHf4AeqzOz5k80aiIi6E&libraries=visualization&callback=initMap">
+    </script>
     <!-- <script type="text/javascript" src="static/js/heatmap.js"></script> -->
   </body>
 </html>

@@ -35,17 +35,17 @@ var videoChart = new Chart(videoCanvas, {
   }
 });
 
-var userCanvas = document.getElementById("user-chart");
-var userChart = new Chart(userCanvas, {
+var deviceCanvas = document.getElementById("device-chart");
+var deviceChart = new Chart(deviceCanvas, {
   type: 'doughnut',
   animation:{
         animateScale:true
   },
   data: {
-    labels: ["Female", "Male"],
+    labels: ["Mobile", "PC"],
     datasets: [{
-      label: "Gender",
-      data: [300, 50],
+      label: "Device",
+      data: [0, 0],
         backgroundColor: [
             "#FF6384",
             "#36A2EB"
@@ -66,7 +66,7 @@ function initMap() {
         center: { lat: 16.0527412, lng: 106.2337417}
     });
     window.heatmap = new google.maps.visualization.HeatmapLayer({
-      radius: 20
+      radius: 10
     });
 }
 
@@ -88,7 +88,10 @@ ws.onmessage = function(event) {
   }
   videoChart.update();
 
-
+  document.getElementById("js-mobile-user").innerHTML = data.UserView.Mobile;
+  document.getElementById("js-pc-user").innerHTML = data.UserView.Desktop;
+  deviceChart.data.datasets[0].data = [data.UserView.Mobile, data.UserView.Desktop];
+  deviceChart.update();
 
   //Trending video
   var content = "";
@@ -118,7 +121,7 @@ function reloadHeatmap(locations) {
 
   window.heatmap = new google.maps.visualization.HeatmapLayer({
       data: data,
-      radius: 25
+      radius: 20
   });
   window.heatmap.setMap(map);
 }
